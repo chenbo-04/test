@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+	<!--  name:配置包名    namespace命名空间访问路径定义-->
+	<constant name="struts.devMode" value="true"></constant>
+	<constant name="struts.enable.DynamicMethodInvocation"  value="true"></constant>
+	
+	<package name="MyPackage" namespace="/"  extends="struts-default">
+	
+	
+	<interceptors>
+		<!-- 注册拦截器 -->
+		<interceptor name="myIntercept" class="com.intercept.Myintercept"></interceptor>	
+		<!-- 注册拦截器栈 -->
+		<interceptor-stack name="myStack">
+		    <!-- 引入自己创建的拦截器 -->	
+			<interceptor-ref name="myIntercept"></interceptor-ref>
+			<!-- 引入struts已经写好的20个 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		
+		</interceptor-stack>
+	</interceptors>
+	
+	<!-- 指定包中的默认拦截栈 -->
+	<default-interceptor-ref name="myStack"></default-interceptor-ref>
+	
+	
+	
+	
+	
+	<global-allowed-methods>regex:.*</global-allowed-methods>
+		<action name="LoginAction_*" class="com.web.UserAction"  method="{1}">
+			<result name="success" type="redirect">index.html</result>
+			<result name="error">login.jsp</result>		
+		</action>
+		
+		<action name="LoginActionDefault" class="com.web.DefaultAction"  method="execute"></action>
+		<action name="LoginActionImpl_*" class="com.web.ImpAction"  method="{1}">
+		<!-- 转发到LoginActionDefault -->
+		<result name="defaultAction" type="chain">LoginActionDefault</result>
+		
+		<!-- 重定向 -->
+		<result name="toLogin" type="redirectAction">
+		<param name="actionName">LoginAction_login</param>
+		
+		<param name="username">${username}</param>
+		<param name="password">${password}</param>
+		</result>
+		
+		</action>		
+		
+	</package>
+	
+</struts>
